@@ -16,5 +16,20 @@ describe("linkedList", function() {
     expect(linkedList.contains).toEqual(jasmine.any(Function));
   });
 
-  // add more tests here to test the functionality of linkedList
+  it("should be able to add value and return that value", function(){
+    linkedList.addToTail(0);
+    expect(makeNode(0)).toEqual(linkedList.removeHead());
+  });
+
+  it("'contains' should return a specified value", function(){
+    linkedList.addToTail(0);
+      expect(linkedList.contains(0)).toEqual(true);
+  });
+
+  it("should be able to add three values and return the first value", function(){
+    linkedList.addoTail(0);
+    linkedList.addToTail(1);
+    linkedList.addToTail(2);
+    expect(linkedList.removeHead()).toEqual(0);
+  });
 });
