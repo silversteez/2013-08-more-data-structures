@@ -26,12 +26,16 @@ describe("linkedList", function() {
     expect(linkedList.contains(0)).toEqual(true);
   });
 
-  it("should be able to add three values and return the first value", function(){
+  it("should be able to add three values and return the each value", function(){
     linkedList.addToTail(0);
-    linkedList.addToTail(1);
-    linkedList.addToTail(2);
+    linkedList.addToTail("hello");
+    linkedList.addToTail({ key : "value" });
     expect(linkedList.removeHead()).toEqual(0);
+    expect(linkedList.removeHead()).toEqual("hello");
+    expect(linkedList.removeHead()).toEqual({ key : "value" });
+  });
+
+  it("should return undefined if removeHead is called on an empty list", function() {
+    expect(linkedList.removeHead()).toEqual(undefined);
   });
 });
-
-//add tests for when tail/head are undefined
