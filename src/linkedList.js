@@ -3,29 +3,34 @@ var makeLinkedList = function(){
   var list = {};
   list.head = null;
   list.tail = null;
-  var index = -1;
 
   list.addToTail = function(value){
     var newNode = makeNode(value);
-    index++;
-    list[index] = newNode;
     if(list.head === null){
       list.head = newNode;
-      list.tail = newNode;
+      list.tail = list.head;
     } else {
+      list.tail.next = newNode;
       list.tail = newNode;
     }
   };
 
   list.removeHead = function(){
-    return list[index].value;
+    var currentHead = list.head;
+    list.head = currentHead.next;
+    return currentHead.value;
   };
 
   list.contains = function(value){
-    for(var key in list){
-      if (list[key].value === value){
+    var currentNode = list.head;
+    if (currentNode.value === value) {
+      return true;
+    }
+    while (currentNode.next) {
+      if (currentNode.value === value) {
         return true;
       }
+      currentNode = currentNode.next;
     }
     return false;
   };
