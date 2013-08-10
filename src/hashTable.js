@@ -13,8 +13,10 @@ var HashTable = function(){
 };
 
 HashTable.prototype.insert = function(k, v){
+  if(this._storageFull()){
+    this._expandStorage();
+  }
   var i = getIndexBelowMaxForKey(k, this._limit);
-  console.log(i);
   if(this._storage.get(i) === undefined){
     var collisionArr = [];
     var keyValPair = [];
@@ -51,6 +53,33 @@ HashTable.prototype.remove = function(k){
     }
   }
 };
+
+HashTable.prototype._storageFull = function(){
+  var i = 0;
+  this._storage.each(function(value){
+    if(value !== undefined){
+      i++;
+    }
+  });
+  if ((i / this._limit) >= 0.75){
+    return true;
+  }
+  return false;
+};
+
+HashTable.prototype._expandStorage = function(){
+  this._limit *= 2;
+  var oldStorage = this._storage;
+  this._storage = makeLimitedArray(this._limit);
+  var hashTable = this;
+  oldStorage.each(function(value){
+    if (value !== undefined) {
+      for (var i = 0; i < value.length; i++) {
+        hashTable.insert(value[i][0], value[i][1]);
+      }
+    }
+  });
+}
 
 // NOTE: For this code to work, you will NEED the code from hashTableHelpers.js
 // Start by loading those files up and playing with the functions it provides.

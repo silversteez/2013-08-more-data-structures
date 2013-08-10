@@ -21,11 +21,20 @@ describe("hashTable", function() {
     expect(hashTable.retrieve(v2)).toEqual(v2);
   });
 
-  it("should be able to remove values"), function() {
+  it("should be able to remove values", function() {
     hashTable.insert("johnson", "a hard worker");
     expect(hashTable.retrieve("johnson")).toEqual("a hard worker");
     hashTable.remove("johnson");
     expect(hashTable.retrieve("johnson")).toEqual(undefined);
-  };
+  });
+
+  it("should properly expand to handle more values than the original size limit", function() {
+    var key = 'adsf';
+    for(var i=0; i < 100; i++){
+      key += 'bsdsdf svnie';
+      hashTable.insert(key, key);
+      expect(hashTable.retrieve(key)).toEqual(key);
+    };
+  });
 
 });
