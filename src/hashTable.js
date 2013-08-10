@@ -44,7 +44,12 @@ HashTable.prototype.retrieve = function(k){
 
 HashTable.prototype.remove = function(k){
   var i = getIndexBelowMaxForKey(k, this._limit);
-  delete this._storage.get(i);
+  var collisionArr = this._storage.get(i);
+  for (var i = 0; i < collisionArr.length; i++) {
+    if (collisionArr[i][0] === k) {
+      collisionArr.splice(i, 1);
+    }
+  }
 };
 
 // NOTE: For this code to work, you will NEED the code from hashTableHelpers.js

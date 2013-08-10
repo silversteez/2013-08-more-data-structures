@@ -21,5 +21,11 @@ describe("hashTable", function() {
     expect(hashTable.retrieve(v2)).toEqual(v2);
   });
 
-  // add more tests!
+  it("should be able to remove values"), function() {
+    hashTable.insert("johnson", "a hard worker");
+    expect(hashTable.retrieve("johnson")).toEqual("a hard worker");
+    hashTable.remove("johnson");
+    expect(hashTable.retrieve("johnson")).toEqual(undefined);
+  };
+
 });
