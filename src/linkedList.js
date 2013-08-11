@@ -36,6 +36,7 @@ var makeLinkedList = function(){
     }
     return false;
   };
+
   return list;
 };
 
@@ -43,6 +44,5 @@ var makeNode = function(value){
   var node = {};
   node.value = value;
   node.next = null;
-
   return node;
 };
