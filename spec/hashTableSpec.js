@@ -37,4 +37,21 @@ describe("hashTable", function() {
     };
   });
 
+  it("should properly reduce storage size to conserve memory", function() {
+    var key = 'adsf';
+    for(var i=0; i < 100; i++){
+      key += 'bsdsdf svnie';
+      hashTable.insert(key, key);
+    };
+    key = 'adsf';
+    for(var j=0; j < 100; j++){
+      key += 'bsdsdf svnie';
+      if (j < 90) {
+        hashTable.remove(key);
+      } else {
+        expect(hashTable.retrieve(key)).toEqual(key);
+      }
+    };
+  });
+
 });

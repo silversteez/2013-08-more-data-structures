@@ -1,74 +1,77 @@
 var HashTable = function(){
   this._limit = 8;
-
-  // Use a limited array to store inserted elements.
-  // It'll keep you from using too much space. Usage:
-  //
-  //   limitedArray.set(3, 'hi');
-  //   limitedArray.get(3); // alerts 'hi'
-  //
-  // There's also a '.each' method that you might find
-  // handy once you're working on resizing
   this._storage = makeLimitedArray(this._limit);
 };
 
 HashTable.prototype.insert = function(k, v){
-  if(this._storageFull()){
-    this._expandStorage();
+  if(this._percentFull() >= 0.75){
+    this._changeStorage(true);
   }
   var i = getIndexBelowMaxForKey(k, this._limit);
   if(this._storage.get(i) === undefined){
-    var collisionArr = [];
-    var keyValPair = [];
-    keyValPair.push(k);
-    keyValPair.push(v);
-    collisionArr.push(keyValPair);
-    this._storage.set(i, collisionArr);
+    var Pairs = [];
   } else {
-    var collisionArr = this._storage.get(i);
-    var keyValPair =  [];
-    keyValPair.push(k);
-    keyValPair.push(v);
-    collisionArr.push(keyValPair);
-    this._storage.set(i, collisionArr);
+    var Pairs = this._storage.get(i);
+  }
+  var duplicateKey = _.reduce(Pairs, function(isDuplicate, pair){
+    if(pair[0] === k){
+      pair[1] = v;
+      return true;
+    }
+  }, false);
+  if (!duplicateKey) {
+    var keyValPair = [k,v];
+    Pairs.push(keyValPair);
+    this._storage.set(i, Pairs);
   }
 };
 
 HashTable.prototype.retrieve = function(k){
   var i = getIndexBelowMaxForKey(k, this._limit);
-  var collisionArr = this._storage.get(i);
-  for (var i = 0; i < collisionArr.length; i++) {
-    if (collisionArr[i][0] === k) {
-      return collisionArr[i][1];
+  var Pairs = this._storage.get(i);
+  if (Pairs) {
+    for (var j = 0; j < Pairs.length; j++) {
+      if (Pairs[j][0] === k) {
+        return Pairs[j][1];
+      }
     }
   }
 };
 
 HashTable.prototype.remove = function(k){
+  if(this._percentFull() <= 0.25){
+    this._changeStorage(false);
+  }
   var i = getIndexBelowMaxForKey(k, this._limit);
-  var collisionArr = this._storage.get(i);
-  for (var i = 0; i < collisionArr.length; i++) {
-    if (collisionArr[i][0] === k) {
-      collisionArr.splice(i, 1);
+  var Pairs = this._storage.get(i);
+  if (Pairs) {
+    for (var j = 0; j < Pairs.length; j++) {
+      if (Pairs[j][0] === k) {
+        Pairs.splice(j, 1);
+        if (Pairs.length < 1) {
+          this._storage.set(i, undefined);
+        }
+      }
     }
   }
 };
 
-HashTable.prototype._storageFull = function(){
+HashTable.prototype._percentFull = function(){
   var i = 0;
   this._storage.each(function(value){
     if(value !== undefined){
       i++;
     }
   });
-  if ((i / this._limit) >= 0.75){
-    return true;
-  }
-  return false;
+  return (i / this._limit);
 };
 
-HashTable.prototype._expandStorage = function(){
-  this._limit *= 2;
+HashTable.prototype._changeStorage = function(shouldExpand){
+  if (shouldExpand) {
+    this._limit *= 2;
+  } else { //then reduce
+    this._limit /= 2;
+  }
   var oldStorage = this._storage;
   this._storage = makeLimitedArray(this._limit);
   var hashTable = this;
@@ -80,7 +83,3 @@ HashTable.prototype._expandStorage = function(){
     }
   });
 }
-
-// NOTE: For this code to work, you will NEED the code from hashTableHelpers.js
-// Start by loading those files up and playing with the functions it provides.
-// You don't need to understand how they work, only their interface is important to you
